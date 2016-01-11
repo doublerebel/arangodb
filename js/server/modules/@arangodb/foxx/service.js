@@ -40,6 +40,7 @@ const fs = require('fs');
 const parameterTypes = require('@arangodb/foxx/manager-utils').parameterTypes;
 const getReadableName = require('@arangodb/foxx/manager-utils').getReadableName;
 const createRouter = require('@arangodb/foxx/router');
+const Tree = require('@arangodb/foxx/router/tree');
 
 const $_MODULE_ROOT = Symbol.for('@arangodb/module.root');
 const $_MODULE_CONTEXT = Symbol.for('@arangodb/module.context');
@@ -286,8 +287,7 @@ class FoxxService {
 
   buildRoutes() {
     const service = this;
-    const context = this.main.context;
-    this.router._buildTree();
+    const tree = new Tree(this.main.context, this.router);
     this.routes.routes.push({
       url: {match: '/*'},
       action: {
@@ -296,7 +296,7 @@ class FoxxService {
           let handled = true;
 
           try {
-            handled = service.router._dispatch(req, res, context);
+            handled = tree.dispatch(req, res);
           } catch (e) {
             let error = e;
             if (!e.statusCode) {
