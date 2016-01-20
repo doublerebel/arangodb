@@ -57,6 +57,8 @@ else {
   exports.ArangoError.prototype = new Error();
 }
 
+exports.ArangoError.prototype.isArangoError = true;
+
 exports.ArangoError.prototype._PRINT = function (context) {
   context.output += this.toString();
 };
